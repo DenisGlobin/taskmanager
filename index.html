@@ -21,14 +21,13 @@
             >
             <button>Добавить</button>
           </form>
-          
+          <br>
           <table class="table">
               <thead class="thead-light">
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Задача</th>
-                  <th scope="col">Старт</th>
-                  <th scope="col">Пауза</th>
+                  <th scope="col">Запустить/Остановить</th>
                   <th scope="col">Затрачено</th>
                   <th scope="col">Удалить</th>
                 </tr>
@@ -37,38 +36,57 @@
                 <tr
                   is="todo-item"
                   v-for="(todo, index) in todos"
-                  v-bind:id="todo.id"
+                  v-bind:key="todo.id"
+                  v-bind:id="index"
                   v-bind:title="todo.title"
                   v-bind:elapsed="todo.elapsed"
+                  v-bind:active="isActive(index)"
                   v-on:remove="todos.splice(index, 1)"
-                  v-on:start="startTimer(index)"
+                  v-on:start="startTimer"
                   v-on:pause="pauseTimer"
+                  v-bind:class="{ 'table-active': isActive(index) }"
+                ></tr>
+                <tr
+                  is="todo-total"
+                  v-bind:total="getTotal()"
                 ></tr>
               </tbody>
             </table>
         </div>
     </div>
 </body>
+
 <script type="text/javascript">
     Vue.component('todo-item', {
-  template: '\
-  <tr>\
-    <th scope="row">{{ id }}</th>\
-    <td>{{ title }}</td>\
-    <td>\
-      <button v-on:click="$emit(\'start\')">Старт</button>\
-    </td>\
-    <td>\
-      <button v-on:click="$emit(\'pause\')">Пауза</button>\
-    </td>\
-    <td>{{ elapsed }}</td>\
-    <td>\
-      <button v-on:click="$emit(\'remove\')">Удалить</button>\
-    </td>\
-  </tr>\
-  ',
-  props: ['id', 'title', 'elapsed']
-})
+      template: '\
+      <tr>\
+        <th scope="row">{{ id + 1 }}</th>\
+        <td>{{ title }}</td>\
+        <td>\
+          <button v-if="active" v-on:click="$emit(\'pause\', id)">Пауза</button>\
+          <button v-else v-on:click="$emit(\'start\', id)">Старт</button>\
+        </td>\
+        <td>{{ elapsed }}</td>\
+        <td>\
+          <button v-on:click="$emit(\'remove\')">Удалить</button>\
+        </td>\
+      </tr>\
+      ',
+      props: ['id', 'title', 'elapsed', 'active']
+    })
+
+    Vue.component('todo-total', {
+      template: '\
+      <tr>\
+        <td></td>\
+        <td>Всего затрачено времени</td>\
+        <td></td>\
+        <td>{{ total }}</td>\
+        <td></td>\
+      </tr>\
+      ',
+      props: ['total']
+    })
 
 var vm = new Vue({
   el: '#todo-list-example',
@@ -76,7 +94,9 @@ var vm = new Vue({
     newTodoText: '',
     todos: [],
     nextTodoId: 1,
-    interval: null
+    interval: null,
+    totalElapsedTime: 0,
+    activeId: null
   },
   methods: {
     addNewTodo: function () {
@@ -92,7 +112,7 @@ var vm = new Vue({
     },
     startTimer: function (id) {
       if (this.interval != null) {
-        clearInterval(this.interval)
+        this.pauseTimer(id)
       }
       this.interval = setInterval(() => {
         this.todos[id].seconds++
@@ -105,10 +125,38 @@ var vm = new Vue({
           this.todos[id].minutes = 0
         }
         this.todos[id].elapsed = this.todos[id].hours + ":" + this.todos[id].minutes + ":" + this.todos[id].seconds
+        this.activeId = id
       }, 1000)
     },
-    pauseTimer: function () {
+    pauseTimer: function (id) {
       clearInterval(this.interval)
+      this.activeId = null
+    },
+    getTotal: function () {
+      let seconds = 0
+      let minutes = 0
+      let hours = 0
+      this.todos.forEach(function(item) {
+        seconds += item.seconds
+        if (seconds > 0 && seconds % 60 == 0) {
+          minutes++
+          seconds = 0
+        }
+        minutes += item.minutes
+        if (minutes > 0 && minutes % 60 == 0) {
+          hours++
+          minutes = 0
+        }
+        hours += item.hours
+      })
+      this.totalElapsedTime = hours + ":" + minutes + ":" + seconds
+      return this.totalElapsedTime
+    },
+    isActive: function (id) {
+      if (this.activeId === id) {
+        return true
+      }
+      return false
     }
   }
 })
