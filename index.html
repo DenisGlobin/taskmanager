@@ -12,7 +12,16 @@
 <body>
     <div class="container">
         <div id="todo-list-example">
+          <h2>{{ title }}</h2>
+
           <form v-on:submit.prevent="addNewTodo">
+            <label for="new-title">Название списка</label>
+            <input
+              v-model="title"
+              id="new-title"
+              placeholder="Чем бы заняться"
+            >
+            <br>
             <label for="new-todo">Добавить задачу</label>
             <input
               v-model="newTodoText"
@@ -21,6 +30,7 @@
             >
             <button>Добавить</button>
           </form>
+
           <br>
           <table class="table">
               <thead class="thead-light">
@@ -38,7 +48,7 @@
                   v-for="(todo, index) in todos"
                   v-bind:key="todo.id"
                   v-bind:id="index"
-                  v-bind:title="todo.title"
+                  v-bind:task="todo.task"
                   v-bind:elapsed="todo.elapsed"
                   v-bind:active="isActive(index)"
                   v-on:remove="todos.splice(index, 1)"
@@ -53,6 +63,19 @@
               </tbody>
             </table>
         </div>
+
+        <br>
+        <div id="load-and-save">
+          <input type="text" id="todoTitles" name="todoTitles" list="titlesList" v-model="selectedTitle" v-on:input="loadProject">
+          <datalist id="titlesList">
+          <option 
+            v-for="title in titles"
+            v-bind:key="title"
+            v-bind:value="title"
+          ></datalist>
+          <button v-on:click="saveProject" class="btn btn-primary">Сохранить</button>
+          <button v-on:click="deleteProject" class="btn btn-danger">Удалить</button>
+        </div>
     </div>
 </body>
 
@@ -61,7 +84,7 @@
       template: '\
       <tr>\
         <th scope="row">{{ id + 1 }}</th>\
-        <td>{{ title }}</td>\
+        <td>{{ task }}</td>\
         <td>\
           <button v-if="active" v-on:click="$emit(\'pause\', id)">Пауза</button>\
           <button v-else v-on:click="$emit(\'start\', id)">Старт</button>\
@@ -72,7 +95,7 @@
         </td>\
       </tr>\
       ',
-      props: ['id', 'title', 'elapsed', 'active']
+      props: ['id', 'task', 'elapsed', 'active']
     })
 
     Vue.component('todo-total', {
@@ -91,6 +114,7 @@
 var vm = new Vue({
   el: '#todo-list-example',
   data: {
+    title: 'Дефолтное название',
     newTodoText: '',
     todos: [],
     nextTodoId: 1,
@@ -102,7 +126,7 @@ var vm = new Vue({
     addNewTodo: function () {
       this.todos.push({
         id: this.nextTodoId++,
-        title: this.newTodoText,
+        task: this.newTodoText,
         elapsed: '',
         hours: 0,
         minutes: 0,
@@ -149,14 +173,52 @@ var vm = new Vue({
         }
         hours += item.hours
       })
-      this.totalElapsedTime = hours + ":" + minutes + ":" + seconds
-      return this.totalElapsedTime
+      this.totalElapsedTime = hours + ":" + minutes + ":" + seconds;
+      return this.totalElapsedTime;
     },
     isActive: function (id) {
       if (this.activeId === id) {
         return true
       }
       return false
+    }
+  }
+})
+
+const loadAndSave = new Vue({
+  el: '#load-and-save',
+  data: {
+    selectedTitle: '',
+    todos: {},
+    titles: []
+  },
+  mounted() {
+    if (localStorage.length > 0) {
+      for (let i = 0; i < localStorage.length; i++) {
+        this.titles.push(localStorage.key(i));
+      }
+    }
+    //console.log(this.titles)
+  },
+  methods: {
+    loadProject: function () {
+      if (localStorage.getItem(this.selectedTitle)) {
+        try {
+          vm.todos = JSON.parse(localStorage.getItem(this.selectedTitle))
+          vm.title = this.selectedTitle
+        } catch(e) {
+          localStorage.removeItem(this.selectedTitle);
+        }
+      }
+    },
+    saveProject: function () {
+      this.todos = vm.todos
+      const parsed = JSON.stringify(this.todos)
+      localStorage.setItem(vm.title, parsed)
+    },
+    deleteProject: function () {
+      localStorage.removeItem(vm.title)
+      document.location.reload(true)
     }
   }
 })
