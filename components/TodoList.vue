@@ -5,7 +5,7 @@
 			<TodoTitle
 				v-model="title"
 				placeholder="Чем бы себя занять"
-				@keydown.enter="editTitle"
+				v-on:keydown.enter="editTitle"
 			/>
 			<br>
 			<!-- Таблица со списком задач -->
@@ -16,34 +16,34 @@
 						<th scope="col">Задача</th>
 						<th scope="col">Запустить/Остановить</th>
 						<th scope="col">Затрачено</th>
-					  	<th scope="col">Удалить</th>
+				  	<th scope="col">Удалить</th>
 					</tr>
 				</thead>
 				<tbody>
 					<!-- Компонент перечня задач -->
 					<TodoListItem
-				        v-for="(todo, index) in todos"
-				        v-bind:key="todo.id"
-				        v-bind:id="index"
-				        v-bind:task="todo.task"
-				        v-bind:elapsed="todo.elapsed"
-				        v-bind:active="isActive(index)"
-				        v-on:remove="todos.splice(index, 1)"
-				        v-on:start="startTimer"
-				        v-on:pause="pauseTimer"
-				        v-bind:class="{ 'table-active': isActive(index) }"
-		          	/>
-		          	<!-- Компонент подсчитывающий общее затраченное время -->
-		          	<TodoListTotal
-						v-bind:todos="todos"
-		          	/>
+		        v-for="(todo, index) in todos"
+		        v-bind:key="todo.id"
+		        v-bind:id="index"
+		        v-bind:task="todo.task"
+		        v-bind:elapsed="todo.elapsed"
+		        v-bind:active="isActive(index)"
+		        v-on:remove="todos.splice(index, 1)"
+		        v-on:start="startTimer"
+		        v-on:pause="pauseTimer"
+		        v-bind:class="{ 'table-active': isActive(index) }"
+        	/>
+        	<!-- Компонент подсчитывающий общее затраченное время -->
+        	<TodoListTotal
+					  v-bind:todos="todos"
+        	/>
 				</tbody>
 			</table>
 			<!-- Компонет для добавления новой задачи -->
 			<AddNewTodoListItem
 				v-model="newTodoText"
 				placeholder="Новая задача"
-				@keydown.enter="addTodo"
+				v-on:keydown.enter="addTodo"
 			/>
 		</div>
 		<br><hr>
@@ -71,15 +71,15 @@ export default {
 		TodoListTotal,
 		LoadAndSave
 	},
-	data () {
+	data: function () {
 		return {
 			title: 'Дефолтное название',
 			newTodoText: '',
-		    todos: [],
-		    nextTodoId: 1,
-		    interval: null,
-		    totalElapsedTime: 0,
-		    activeId: null
+	    todos: [],
+	    nextTodoId: 1,
+	    interval: null,
+	    totalElapsedTime: 0,
+	    activeId: null
 		}
 	},
 	methods: {
@@ -91,9 +91,9 @@ export default {
 					id: this.nextTodoId++,
 					task: trimmedText,
 					elapsed: '',
-	        		hours: 0,
-	        		minutes: 0,
-	        		seconds: 0
+      		hours: 0,
+      		minutes: 0,
+      		seconds: 0
 				})
 				this.newTodoText = ''
 			}
@@ -142,8 +142,9 @@ export default {
 				try {
 					this.todos = JSON.parse(localStorage.getItem(selectedTitle))
 					this.title = selectedTitle
+          this.$notify('Список загружен','success')
 				} catch(e) {
-					localStorage.removeItem(selectedTitle);
+					localStorage.removeItem(selectedTitle)
 				}
 			}
 		},

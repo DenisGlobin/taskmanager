@@ -3,11 +3,11 @@
 		<h1>{{ value }}</h1>
 		<br>
 		<label for="new-title"><strong>Название списка</strong></label>
-	    <input
+    <input
 			id="new-title"
 			type="text"
 			class="input"
-			:value="value"
+			v-bind:value="value"
 			v-on="titleListeners"
 		>
 	</div>
@@ -18,24 +18,25 @@ export default {
 	props: {
 	    value: {
 	    	type: String,
-	    	default: '',
+	    	required: true
 	    }
 	},
 	computed: {
-	    titleListeners () {
-			var vm = this
-			// `Object.assign` объединяет объекты вместе, чтобы получить новый объект
-			return Object.assign({},
-			// Мы добавляем все слушатели из родителя
-			this.$listeners,
-			// Затем мы можем добавить собственные слушатели или
-			// перезаписать поведение некоторых существующих.
-			{
-			  // Это обеспечит, что будет работать v-model на компоненте
-				input: function (event) {
-					vm.$emit('input', event.target.value)
-				}
-			})
+	    titleListeners: function () {
+  			var vm = this
+  			// `Object.assign` объединяет объекты вместе, чтобы получить новый объект
+  			return Object.assign({},
+    			// Мы добавляем все слушатели из родителя
+    			this.$listeners,
+    			// Затем мы можем добавить собственные слушатели или
+    			// перезаписать поведение некоторых существующих.
+    			{
+    			  // Это обеспечит, что будет работать v-model на компоненте
+    				input: function (event) {
+    					vm.$emit('input', event.target.value)
+    				}
+    			}
+        )
 	    }
 	}
 }

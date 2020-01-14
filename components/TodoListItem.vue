@@ -15,6 +15,21 @@
 
 <script>
 	export default {
-		props: ['id', 'task', 'elapsed', 'active']
+		props: {
+			id: {
+				type: Number
+			},
+			task: {
+				type: String,
+				required: true
+			},
+			elapsed: {
+				type: String,
+				default: '0:0:0'
+			},
+			active: {
+				type: Boolean
+			}
+		}
 	}
 </script>

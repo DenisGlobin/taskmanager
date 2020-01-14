@@ -5,7 +5,7 @@
 			id="new-todo"
 			type="text"
 			class="input"
-			:value="value"
+			v-bind:value="value"
 			v-on="listeners"
 		>
 	</div>
@@ -16,24 +16,25 @@ export default {
 	props: {
 	    value: {
 	    	type: String,
-	    	default: '',
+	    	required: true
 	    }
 	},
 	computed: {
-	    listeners () {
-			var vm = this
-			// `Object.assign` объединяет объекты вместе, чтобы получить новый объект
-			return Object.assign({},
-			// Мы добавляем все слушатели из родителя
-			this.$listeners,
-			// Затем мы можем добавить собственные слушатели или
-			// перезаписать поведение некоторых существующих.
-			{
-			  // Это обеспечит, что будет работать v-model на компоненте
-				input: function (event) {
-					vm.$emit('input', event.target.value)
-				}
-			})
+	    listeners: function () {
+  			var vm = this
+  			// `Object.assign` объединяет объекты вместе, чтобы получить новый объект
+  			return Object.assign({},
+    			// Мы добавляем все слушатели из родителя
+    			this.$listeners,
+    			// Затем мы можем добавить собственные слушатели или
+    			// перезаписать поведение некоторых существующих.
+    			{
+    			  // Это обеспечит, что будет работать v-model на компоненте
+    				input: function (event) {
+    					vm.$emit('input', event.target.value)
+    				}
+    			}
+        )
 	    }
 	}
 }

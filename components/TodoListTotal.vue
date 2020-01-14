@@ -12,10 +12,10 @@
 export default {
 	props: {
 	    todos: {
-	    	type: Array,
+	    	type: Array
 	    }
 	},
-	data () {
+	data: function () {
 		return {
 		    totalElapsedTime: '',
 		}
