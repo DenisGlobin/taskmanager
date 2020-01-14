@@ -46,11 +46,17 @@
 				v-on:keydown.enter="addTodo"
 			/>
 		</div>
+    <br>
+    <TodoListNotes
+      v-bind:notes="todoNotes"
+      v-on:add-notes="addNotes"
+    />
 		<br><hr>
 		<!-- Кнопки для сохранения и загрузки списка задач -->
 		<LoadAndSave
 			v-bind:name="title"
 			v-bind:todos="todos"
+      v-bind:notes="todoNotes"
 			v-on:load-list="loadProject"
 		/>
 	</div>
@@ -62,6 +68,7 @@ import TodoListItem from './TodoListItem.vue'
 import AddNewTodoListItem from './AddNewTodoListItem.vue'
 import TodoListTotal from './TodoListTotal.vue'
 import LoadAndSave from './LoadAndSave.vue'
+import TodoListNotes from './TodoListNotes.vue'
 
 export default {
 	components: {
@@ -69,7 +76,8 @@ export default {
 		AddNewTodoListItem,
 		TodoListItem,
 		TodoListTotal,
-		LoadAndSave
+		LoadAndSave,
+    TodoListNotes
 	},
 	data: function () {
 		return {
@@ -79,7 +87,8 @@ export default {
 	    nextTodoId: 1,
 	    interval: null,
 	    totalElapsedTime: 0,
-	    activeId: null
+	    activeId: null,
+      todoNotes: ''
 		}
 	},
 	methods: {
@@ -106,48 +115,52 @@ export default {
 			}
 		},
 		// Запустить таймер для задачи
-	    startTimer: function (id) {
-	      if (this.interval != null) {
-	        this.pauseTimer(id)
-	      }
-	      this.interval = setInterval(() => {
-	        this.todos[id].seconds++
-	        if ((this.todos[id].seconds > 0) && (this.todos[id].seconds % 60 == 0)) {
-	          this.todos[id].minutes++
-	          this.todos[id].seconds = 0
-	        }
-	        if ((this.todos[id].minutes > 0) && (this.todos[id].minutes % 60 == 0)) {
-	          this.todos[id].hours++
-	          this.todos[id].minutes = 0
-	        }
-	        this.todos[id].elapsed = this.todos[id].hours + ":" + this.todos[id].minutes + ":" + this.todos[id].seconds
-	        this.activeId = id
-	      }, 1000)
-	    },
-	    // Остановить таймер
-	    pauseTimer: function (id) {
-	      clearInterval(this.interval)
-	      this.activeId = null
-	    },
-	    // Проверить запущен ли таймер на данной задаче
-	    isActive: function (id) {
-	      if (this.activeId === id) {
-	        return true
-	      }
-	      return false
-	    },
-	    // Загрузить сохранённый список задач
-	    loadProject: function (selectedTitle) {
+    startTimer: function (id) {
+      if (this.interval != null) {
+        this.pauseTimer(id)
+      }
+      this.interval = setInterval(() => {
+        this.todos[id].seconds++
+        if ((this.todos[id].seconds > 0) && (this.todos[id].seconds % 60 == 0)) {
+          this.todos[id].minutes++
+          this.todos[id].seconds = 0
+        }
+        if ((this.todos[id].minutes > 0) && (this.todos[id].minutes % 60 == 0)) {
+          this.todos[id].hours++
+          this.todos[id].minutes = 0
+        }
+        this.todos[id].elapsed = this.todos[id].hours + ":" + this.todos[id].minutes + ":" + this.todos[id].seconds
+        this.activeId = id
+      }, 1000)
+    },
+    // Остановить таймер
+    pauseTimer: function (id) {
+      clearInterval(this.interval)
+      this.activeId = null
+    },
+    // Проверить запущен ли таймер на данной задаче
+    isActive: function (id) {
+      if (this.activeId === id) {
+        return true
+      }
+      return false
+    },
+    // Загрузить сохранённый список задач
+    loadProject: function (selectedTitle) {
 			if (localStorage.getItem(selectedTitle)) {
 				try {
 					this.todos = JSON.parse(localStorage.getItem(selectedTitle))
 					this.title = selectedTitle
+          this.todoNotes = this.todos[0]['notes']
           this.$notify('Список загружен','success')
 				} catch(e) {
 					localStorage.removeItem(selectedTitle)
 				}
 			}
-		},
+	  },
+    addNotes: function (message) {
+      this.todoNotes = message
+    }
 	}
 }
 </script>

@@ -16,13 +16,17 @@
 <script>
 export default {
 	props: {
-	    name: {
-	    	type: String,
-	    	required: true
-	    },
-	    todos: {
-    		type: Array
-    	}
+    name: {
+    	type: String,
+    	required: true
+    },
+    todos: {
+  		type: Array
+  	},
+    notes: {
+      type: String,
+      default: ''
+    }
 	},
 	data: function () {
 		return {
@@ -41,6 +45,7 @@ export default {
 	methods: {
 		// Сохранить текущий список задач
 		saveProject: function () {
+      this.todos[0]['notes'] = this.notes
 			const parsed = JSON.stringify(this.todos)
 			localStorage.setItem(this.name, parsed)
       this.$notify('Список сохранён','success')
