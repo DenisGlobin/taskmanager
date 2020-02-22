@@ -17,7 +17,7 @@ export default {
 	},
 	data: function () {
 		return {
-		    totalElapsedTime: '',
+		    totalElapsedTime: ''
 		}
 	},
 	methods: {
@@ -28,14 +28,14 @@ export default {
 		let hours = 0
 		this.todos.forEach(function(item) {
 			seconds += item.seconds
-			if ((seconds > 0) && (seconds % 60 == 0)) {
+			if (seconds > 60) {
 			    minutes++
-			    seconds = 0
+			    seconds = seconds - 60
 			}
 			minutes += item.minutes
-			if ((minutes > 0) && (minutes % 60 == 0)) {
+			if (minutes > 60) {
 			    hours++
-			    minutes = 0
+			    minutes = minutes - 60
 			}
 			hours += item.hours
 		})

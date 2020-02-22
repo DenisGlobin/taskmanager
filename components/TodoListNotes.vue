@@ -1,7 +1,7 @@
 <template>
   <div class="form-group">
     <label for="todoNotesTextarea"><strong>Примечания</strong></label>
-    <textarea class="form-control" id="todoNotesTextarea" rows="3" v-model="notes"></textarea>
+    <textarea class="form-control" id="todoNotesTextarea" rows="6" v-model="notes"></textarea>
   </div>
 </template>
 
