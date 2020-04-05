@@ -1,16 +1,19 @@
 <template>
 	<div id="load-and-save">
-		<input type="text" id="todoTitles" name="todoTitles" list="titlesList" v-model="selectedTitle" v-on:input="$emit('load-list', $event.target.value)" placeholder="Загрузить список задач">
-		<datalist id="titlesList">
-  		<option 
-  			v-for="title in titles"
-  			v-bind:key="title"
-  			v-bind:value="title"
-  		>{{ title }}</option>
-		</datalist>
-		<button v-on:click="saveProject" class="btn btn-primary">Сохранить список</button>
-		<button v-on:click="deleteProject" class="btn btn-danger">Удалить список</button>
-    </div>
+    <div class="form-group">
+      <label for="todoTitles"><b>Загрузить список задач: </b></label>
+  		<input type="text" id="todoTitles" name="todoTitles" list="titlesList" v-model="selectedTitle" v-on:input="$emit('load-list', $event.target.value)" placeholder="Выберете список задач">
+  		<datalist id="titlesList">
+    		<option 
+    			v-for="title in titles"
+    			v-bind:key="title"
+    			v-bind:value="title"
+    		>{{ title }}</option>
+  		</datalist>
+  		<button v-on:click="saveProject" class="btn btn-primary">Сохранить список</button>
+  		<button v-on:click="deleteProject" class="btn btn-danger">Удалить список</button>
+    </div> 
+  </div>
 </template>
 
 <script>
@@ -57,8 +60,6 @@ export default {
         function() {
           localStorage.removeItem(vm.name)
           document.location.reload(true)
-          //Object.assign(vm.$data, vm.$options.data.call(vm))
-          //vm.$notify('Список удалён','success')
         }, 
         function() { 
           vm.$notify('Действие отменено','error')

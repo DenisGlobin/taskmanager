@@ -2,13 +2,24 @@
 	<tr>
         <th scope="row">{{ id + 1 }}</th>
         <td>{{ task }}</td>
-        <td>
-        	<button v-if="active" v-on:click="$emit('pause', id)">Пауза</button>
-        	<button v-else v-on:click="$emit('start', id)">Старт</button>
+        <td align="center">
+        	<button class="btn btn-outline-secondary" v-if="active" v-on:click="$emit('pause', id)">
+        		<span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+        	</button>
+        	<button class="btn btn-outline-secondary" v-else v-on:click="$emit('start', id)">
+        		<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+        	</button>
         </td>
-        <td>{{ elapsed }}</td>
+        <td align="center">{{ elapsed }}</td>
         <td>
-        	<button v-on:click="$emit('remove')">Удалить</button>
+        	<button class="btn btn-primary" data-toggle="modal" v-on:click="$emit('edit', id, task)">
+        		<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+        	</button>
+        </td>
+        <td>
+        	<button class="btn btn-danger" v-on:click="$emit('remove')">
+				<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+        	</button>
         </td>
   	</tr>
 </template>

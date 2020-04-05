@@ -1,9 +1,9 @@
 <template>
     <tr>
         <td></td>
-        <td>Всего затрачено времени</td>
+        <td><b>Всего затрачено времени</b></td>
         <td></td>
-        <td>{{ getTotal() }}</td>
+        <td align="center">{{ getTotal() }}</td>
         <td></td>
       </tr>
 </template>
